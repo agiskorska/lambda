@@ -1,15 +1,18 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import dotenv from 'dotenv';
+import {
+  mockDocument
+} from './mockData'
 dotenv.config();
 
 describe('navbar collection', () => {
   let client: MongoClient;
   let collection: any;
-  let db = process.env.MONGODB_DATABASE_TEST!;
-  let database;
-  const username = encodeURIComponent(process.env.MONGODB_USER!);
-  const password = encodeURIComponent(process.env.MONGODB_PASSWORD!);
-  const cluster = process.env.MONGODB_CLUSTER!;
+  let databaseTest;
+  let dbTest = process.env.MONGODB_DATABASE_TEST!;
+  const usernameTest = encodeURIComponent(process.env.MONGODB_USER!);
+  const passwordTest = encodeURIComponent(process.env.MONGODB_PASSWORD!);
+  const clusterTest = process.env.MONGODB_CLUSTER!;
 
   beforeAll(async () => {
     const mongoClientConfig = { 
@@ -17,11 +20,13 @@ describe('navbar collection', () => {
       useUnifiedTopology: true, 
       serverApi: ServerApiVersion.v1 
     }
-    const uri = `mongodb+srv://${username}:${password}@${cluster}/${db}?retryWrites=true&w=majority`;
+    const uri = `mongodb+srv://${usernameTest}:${passwordTest}@${clusterTest}/${dbTest}?retryWrites=true&w=majority`;
     client = new MongoClient(uri, mongoClientConfig);
     await client.connect();
-    database = client.db(db);
-    collection = database.collection('navbar');
+    databaseTest = client.db(dbTest);
+    collection = databaseTest.collection('navbar');
+    const result = await collection.insertOne(mockDocument);
+    console.log(`Inserted document with ID: ${result.insertedId}`);    
   });
 
   afterAll(async () => {
